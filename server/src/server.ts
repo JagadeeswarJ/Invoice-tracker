@@ -1,11 +1,29 @@
 import express, { Request, Response } from "express";
-
+import axios from "axios";
 
 const app = express();
+// const url = "https://invoice-tracker-server.onrender.com"
+const url = "http://localhost:3000"
+const interval = 1000 * 60 * 10; // 5 minutes in milliseconds
 app.use(express.json());
 app.set("trust proxy", true);
 
-app.get("/", (req: Request, res: Response) => {
+function reloadWebsite() {
+    axios
+        .get(url + "/u-awake")
+        .then((response) => {
+            console.log("website reloded");
+        })
+        .catch((error) => {
+            console.error(`Error : ${error.message}`);
+        });
+}
+setInterval(reloadWebsite, interval);
+app.get("/u-awake", (req: Request, res: Response) => {
+    res.send({ message: "ya-awake" });
+});
+
+app.get("/log", (req: Request, res: Response) => {
     // Trust proxy is already set in app config
 
     // Get direct IP from socket (likely internal IP on platforms like Render)
@@ -29,9 +47,14 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 
-app.get("/api", (req: Request, res: Response) => {
-    res.send({ message: "API is working!" });
+
+
+app.get("/", (req: Request, res: Response) => {
+    res.send({ message: "Server is working!" });
 });
+
+
+
 
 app.listen(3000, () => {
     console.log(`Server is running on port 3000`);
