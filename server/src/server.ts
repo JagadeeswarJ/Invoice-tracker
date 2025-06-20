@@ -6,16 +6,28 @@ app.use(express.json());
 app.set("trust proxy", true);
 
 app.get("/", (req: Request, res: Response) => {
-    // res.send("Hello, Worldd!");
-    console.log(req.ip)
-    console.log(req.headers)
+    // Trust proxy is already set in app config
+
+    // Get direct IP from socket (likely internal IP on platforms like Render)
+    const directIp = req.socket.remoteAddress;
+
+    // Check the 'x-forwarded-for' header (may contain the real client IP if behind a proxy)
     const forwarded = req.headers['x-forwarded-for'];
-    const ip = typeof forwarded === 'string' ? forwarded.split(',')[0] : req.socket.remoteAddress;
-    console.log("ip from x-forwarded-for:", ip);
 
-    // res.send(req.ip);
+    // Determine the real client IP: use forwarded IP if available, otherwise use socket IP
+    const realIp = typeof forwarded === 'string' ? forwarded.split(',')[0] : directIp;
 
+    // Log various forms of IP for debugging
+    console.log("req.ip:", req.ip);                     // Express-calculated IP (uses trust proxy)
+    console.log("req.ips:", req.ips);                   // Array of IPs from 'x-forwarded-for'
+    console.log("req.socket.remoteAddress:", directIp); // Direct socket IP (raw TCP)
+    console.log("x-forwarded-for header:", forwarded);  // Raw forwarded-for header
+    console.log("Final chosen IP:", realIp);            // Our derived client IP
+
+    // Respond to client
+    res.send(`Your IP is: ${realIp}`);
 });
+
 
 app.get("/api", (req: Request, res: Response) => {
     res.send({ message: "API is working!" });
