@@ -2,8 +2,7 @@ import express, { Request, Response } from "express";
 import axios from "axios";
 
 const app = express();
-// const url = "https://invoice-tracker-server.onrender.com"
-const url = "http://localhost:3000"
+const url = "https://invoice-tracker-server.onrender.com"
 const interval = 1000 * 60 * 10; // 5 minutes in milliseconds
 app.use(express.json());
 app.set("trust proxy", true);
