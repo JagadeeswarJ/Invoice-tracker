@@ -4,6 +4,7 @@ dotenv.config();
 import axios from "axios";
 import cors from "cors";
 import todosRouter from "./routes/todos.js";
+import authRouter from "./routes/auth.ts";
 
 const app = express();
 const url = "https://invoice-tracker-server.onrender.com"
@@ -24,7 +25,7 @@ function reloadWebsite() {
 }
 setInterval(reloadWebsite, interval);
 
-
+app.use("/auth", authRouter);
 app.use("/todos", todosRouter);
 app.get("/log", (req: Request, res: Response) => {
     // Trust proxy is already set in app config
