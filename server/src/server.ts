@@ -1,10 +1,15 @@
 import express, { Request, Response } from "express";
+import dotenv from 'dotenv';
+dotenv.config();
 import axios from "axios";
+import cors from "cors";
+import todosRouter from "./routes/todos.js";
 
 const app = express();
 const url = "https://invoice-tracker-server.onrender.com"
 const interval = 1000 * 60 * 10; // 5 minutes in milliseconds
 app.use(express.json());
+app.use(cors());
 app.set("trust proxy", true);
 
 function reloadWebsite() {
@@ -18,10 +23,9 @@ function reloadWebsite() {
         });
 }
 setInterval(reloadWebsite, interval);
-app.get("/u-awake", (req: Request, res: Response) => {
-    res.send({ message: "ya-awake" });
-});
 
+
+app.use("/todos", todosRouter);
 app.get("/log", (req: Request, res: Response) => {
     // Trust proxy is already set in app config
 
@@ -44,17 +48,12 @@ app.get("/log", (req: Request, res: Response) => {
     // Respond to client
     res.send(`Your IP is: ${realIp}`);
 });
-
-
-
-
 app.get("/", (req: Request, res: Response) => {
     res.send({ message: "Server is working!" });
 });
-
-
-
-
+app.get("/u-awake", (req: Request, res: Response) => {
+    res.send({ message: "ya-awake" });
+});
 app.listen(3000, () => {
     console.log(`Server is running on port 3000`);
 
