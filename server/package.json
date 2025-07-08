@@ -10,7 +10,7 @@
     "start": "node dist/server.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "jj",
   "license": "ISC",
   "type": "module",
   "devDependencies": {
